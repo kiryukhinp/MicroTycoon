@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "BaseBuilding.h"
+#include "BuildingSocket.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/Pawn.h"
 #include "TycoonPawn.generated.h"
@@ -25,13 +27,31 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
+	
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	UFUNCTION(BlueprintNativeEvent,BlueprintCallable)
+	void OnBuildingLocatingStart(FTransform SocketTransform, TSubclassOf<ABaseBuilding> CurBuilding);
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnBuildingLocatingProcessing(FTransform SocketTransform);
+	UFUNCTION(BlueprintNativeEvent)
+	void OnBuildingLocationFinished(FTransform SocketTransform);
+	void PressOnScene();
 
-	void PressOnScene();	
 	
 	UPROPERTY(EditAnywhere)
 	UCameraComponent* Camera;
 	UPROPERTY()
 	APlayerController* PlayerController;
+	UPROPERTY()
+	ABuildingSocket *LastSocket;
+	UPROPERTY(BlueprintReadWrite)
+	ABaseBuilding *LastBuilding;
 	float TraceLength;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	bool bBuildingInProcess;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	bool bCanBuild;
+	FHitResult LastHitResult;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category=Building)
+	TSubclassOf<ABaseBuilding> BuildingType;
 };
